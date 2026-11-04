@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ClassroomRequest;
+use App\Http\Requests\ClassroomUserRequest;
 use App\Http\Resources\ClassroomResource;
 use App\Http\Services\ClassroomService;
 use Illuminate\Http\Request;
@@ -12,7 +13,8 @@ use OpenApi\Attributes as OA;
 class ClassroomController extends Controller
 {
     public function __construct(private ClassroomService $classroomService)
-    {}
+    {
+    }
 
     /**
      * Display a listing of the resource.
@@ -137,5 +139,80 @@ class ClassroomController extends Controller
         $this->classroomService->destroy($id);
 
         return response()->noContent();
+    }
+
+    /**
+     * Adiciona ou remove um usuário de uma turma.
+     */
+    #[OA\Post(
+        path: '/classrooms/{id}/users',
+        summary: 'Adiciona ou remove um usuário de uma turma',
+        security: [['sanctum' => []]],
+        tags: ['Turmas'],
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                required: true,
+                schema: new OA\Schema(type: 'integer')
+            )
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['user_id', 'action'],
+                properties: [
+                    new OA\Property(
+                        property: 'user_id',
+                        type: 'integer',
+                        example: 1
+                    ),
+                    new OA\Property(
+                        property: 'action',
+                        type: 'string',
+                        enum: ['add', 'remove'],
+                        example: 'add'
+                    ),
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Usuário adicionado ou removido',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(
+                            property: 'data',
+                            ref: '#/components/schemas/Classroom'
+                        )
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 401,
+                ref: '#/components/responses/Unauthenticated'
+            ),
+            new OA\Response(
+                response: 404,
+                ref: '#/components/responses/NotFound'
+            ),
+            new OA\Response(
+                response: 422,
+                ref: '#/components/responses/ValidationError'
+            ),
+        ]
+    )]
+    public function manageUser(ClassroomUserRequest $request, string $id)
+    {
+        $data = $request->validated();
+
+        if ($data['action'] === 'add') {
+            $classroom = $this->classroomService->addUser($id, $data['user_id']);
+        } else {
+            $classroom = $this->classroomService->removeUser($id, $data['user_id']);
+        }
+
+        return new ClassroomResource($classroom);
     }
 }

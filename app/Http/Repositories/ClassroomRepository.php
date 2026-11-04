@@ -13,12 +13,30 @@ class ClassroomRepository extends BaseRepository
 
     public function getWithFilters(array $data)
     {
-        $builder = $this->model->query()->where(function ($query) use($data) {
+        $builder = $this->model->query()->where(function ($query) use ($data) {
             if (data_get($data, 'name')) {
                 $query->where('name', 'like', '%' . $data['name'] . '%');
             }
         });
 
         return $this->index($builder);
+    }
+
+    public function addUser(string $classroomId, int $userId)
+    {
+        $classroom = $this->model->findOrFail($classroomId);
+
+        $classroom->users()->syncWithoutDetaching([$userId]);
+
+        return $classroom->load('users');
+    }
+
+    public function removeUser(string $classroomId, int $userId)
+    {
+        $classroom = $this->model->findOrFail($classroomId);
+
+        $classroom->users()->detach($userId);
+
+        return $classroom->load('users');
     }
 }

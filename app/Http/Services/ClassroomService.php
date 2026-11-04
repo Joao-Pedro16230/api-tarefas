@@ -15,4 +15,14 @@ class ClassroomService extends BaseService
     {
         return $this->classroomRepository->getWithFilters($data);
     }
+
+    public function addUser(string $classroomId, int $userId)
+    {
+        return $this->classroomRepository->addUser($classroomId, $userId);
+    }
+
+    public function removeUser(string $classroomId, int $userId)
+    {
+        return $this->classroomRepository->removeUser($classroomId, $userId);
+    }
 }
