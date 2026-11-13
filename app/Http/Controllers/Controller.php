@@ -6,7 +6,7 @@ use OpenApi\Attributes as OA;
 
 #[OA\Info(
     version: '1.0.0',
-    title: 'API Paradigmas de Programação',
+    title: 'API Gerenciador de Tarefas',
     description: 'Documentação da API. Para acessar as rotas protegidas, faça login em POST /login, copie o token retornado e clique em "Authorize".'
 )]
 #[OA\SecurityScheme(

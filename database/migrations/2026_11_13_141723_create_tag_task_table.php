@@ -7,23 +7,23 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create('classroom_user', function (Blueprint $table) {
+        Schema::create('tag_task', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('classroom_id')
-                ->constrained('classrooms')
+            $table->foreignId('task_id')
+                ->constrained('tasks')
                 ->cascadeOnDelete();
 
-            $table->foreignId('user_id')
-                ->constrained('users')
+            $table->foreignId('tag_id')
+                ->constrained('tags')
                 ->cascadeOnDelete();
 
-            $table->unique(['classroom_id', 'user_id']);
+            $table->unique(['task_id', 'tag_id']);
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('classroom_user');
+        Schema::dropIfExists('tag_task');
     }
 };

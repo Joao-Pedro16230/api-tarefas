@@ -1,24 +1,23 @@
 {
     "openapi": "3.0.0",
     "info": {
-        "title": "API Paradigmas de Programação",
+        "title": "API Gerenciador de Tarefas",
         "description": "Documentação da API. Para acessar as rotas protegidas, faça login em POST /login, copie o token retornado e clique em \"Authorize\".",
         "version": "1.0.0"
     },
     "paths": {
-        "/classrooms": {
+        "/categories": {
             "get": {
                 "tags": [
-                    "Turmas"
+                    "Categorias"
                 ],
-                "summary": "Lista as turmas",
-                "description": "Display a listing of the resource.",
-                "operationId": "da89e81b16f112cad0419c3aff950a7c",
+                "summary": "Lista as categorias do usuário autenticado",
+                "operationId": "b1b247b2b491b0491c3c728dc33f23f0",
                 "parameters": [
                     {
                         "name": "name",
                         "in": "query",
-                        "description": "Filtra pelo nome (busca parcial)",
+                        "description": "Filtra categorias pelo nome",
                         "required": false,
                         "schema": {
                             "type": "string"
@@ -27,22 +26,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Lista de turmas",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/components/schemas/Classroom"
-                                            }
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
+                        "description": "Lista de categorias retornada com sucesso"
                     },
                     "401": {
                         "$ref": "#/components/responses/Unauthenticated"
@@ -56,362 +40,10 @@
             },
             "post": {
                 "tags": [
-                    "Turmas"
+                    "Categorias"
                 ],
-                "summary": "Cadastra uma turma",
-                "description": "Store a newly created resource in storage.",
-                "operationId": "29ea28b1658c443c3c764e98e584542d",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "name",
-                                    "vacancies"
-                                ],
-                                "properties": {
-                                    "name": {
-                                        "type": "string",
-                                        "example": "Turma A",
-                                        "maxLength": 500,
-                                        "minLength": 2
-                                    },
-                                    "vacancies": {
-                                        "type": "integer",
-                                        "example": 30,
-                                        "maximum": 500,
-                                        "minimum": 1
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "description": "Turma criada",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/components/schemas/Classroom"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "$ref": "#/components/responses/Unauthenticated"
-                    },
-                    "422": {
-                        "$ref": "#/components/responses/ValidationError"
-                    }
-                },
-                "security": [
-                    {
-                        "sanctum": []
-                    }
-                ]
-            }
-        },
-        "/classrooms/{id}": {
-            "get": {
-                "tags": [
-                    "Turmas"
-                ],
-                "summary": "Exibe uma turma",
-                "description": "Display the specified resource.",
-                "operationId": "b1ea22847c96842374a8a97c1fbd6419",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Turma encontrada",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/components/schemas/Classroom"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "$ref": "#/components/responses/Unauthenticated"
-                    },
-                    "404": {
-                        "$ref": "#/components/responses/NotFound"
-                    }
-                },
-                "security": [
-                    {
-                        "sanctum": []
-                    }
-                ]
-            },
-            "put": {
-                "tags": [
-                    "Turmas"
-                ],
-                "summary": "Atualiza uma turma",
-                "description": "Update the specified resource in storage.",
-                "operationId": "36111a19c041f0d856a30d490067b149",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "name",
-                                    "vacancies"
-                                ],
-                                "properties": {
-                                    "name": {
-                                        "type": "string",
-                                        "example": "Turma A",
-                                        "maxLength": 500,
-                                        "minLength": 2
-                                    },
-                                    "vacancies": {
-                                        "type": "integer",
-                                        "example": 30,
-                                        "maximum": 500,
-                                        "minimum": 1
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Turma atualizada",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/components/schemas/Classroom"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "$ref": "#/components/responses/Unauthenticated"
-                    },
-                    "404": {
-                        "$ref": "#/components/responses/NotFound"
-                    },
-                    "422": {
-                        "$ref": "#/components/responses/ValidationError"
-                    }
-                },
-                "security": [
-                    {
-                        "sanctum": []
-                    }
-                ]
-            },
-            "delete": {
-                "tags": [
-                    "Turmas"
-                ],
-                "summary": "Remove uma turma",
-                "description": "Remove the specified resource from storage.",
-                "operationId": "e32c243f4e775934f6840db074de820c",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "Turma removida"
-                    },
-                    "401": {
-                        "$ref": "#/components/responses/Unauthenticated"
-                    },
-                    "404": {
-                        "$ref": "#/components/responses/NotFound"
-                    }
-                },
-                "security": [
-                    {
-                        "sanctum": []
-                    }
-                ]
-            }
-        },
-        "/classrooms/{id}/users": {
-            "post": {
-                "tags": [
-                    "Turmas"
-                ],
-                "summary": "Adiciona ou remove um usuário de uma turma",
-                "description": "Adiciona ou remove um usuário de uma turma.",
-                "operationId": "8a43ae387d26c02504b0838448b07b5a",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "user_id",
-                                    "action"
-                                ],
-                                "properties": {
-                                    "user_id": {
-                                        "type": "integer",
-                                        "example": 1
-                                    },
-                                    "action": {
-                                        "type": "string",
-                                        "example": "add",
-                                        "enum": [
-                                            "add",
-                                            "remove"
-                                        ]
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Usuário adicionado ou removido",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/components/schemas/Classroom"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "$ref": "#/components/responses/Unauthenticated"
-                    },
-                    "404": {
-                        "$ref": "#/components/responses/NotFound"
-                    },
-                    "422": {
-                        "$ref": "#/components/responses/ValidationError"
-                    }
-                },
-                "security": [
-                    {
-                        "sanctum": []
-                    }
-                ]
-            }
-        },
-        "/courses": {
-            "get": {
-                "tags": [
-                    "Cursos"
-                ],
-                "summary": "Lista os cursos",
-                "description": "Display a listing of the resource.",
-                "operationId": "75403048c36d79fe464ce4716c204c61",
-                "parameters": [
-                    {
-                        "name": "name",
-                        "in": "query",
-                        "description": "Filtra pelo nome (busca parcial)",
-                        "required": false,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Lista de cursos",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/components/schemas/Course"
-                                            }
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "$ref": "#/components/responses/Unauthenticated"
-                    }
-                },
-                "security": [
-                    {
-                        "sanctum": []
-                    }
-                ]
-            },
-            "post": {
-                "tags": [
-                    "Cursos"
-                ],
-                "summary": "Cadastra um curso",
-                "description": "Store a newly created resource in storage.",
-                "operationId": "56ff5a96b473881afe594ca81aeb754b",
+                "summary": "Cadastra uma nova categoria",
+                "operationId": "c86cd7a85ad06a4fe905bfab62146952",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -423,7 +55,12 @@
                                 "properties": {
                                     "name": {
                                         "type": "string",
-                                        "example": "Engenharia de Software"
+                                        "example": "Faculdade"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Atividades da faculdade",
+                                        "nullable": true
                                     }
                                 },
                                 "type": "object"
@@ -433,19 +70,7 @@
                 },
                 "responses": {
                     "201": {
-                        "description": "Curso criado",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/components/schemas/Course"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
+                        "description": "Categoria cadastrada com sucesso"
                     },
                     "401": {
                         "$ref": "#/components/responses/Unauthenticated"
@@ -461,14 +86,13 @@
                 ]
             }
         },
-        "/courses/{id}": {
+        "/categories/{id}": {
             "get": {
                 "tags": [
-                    "Cursos"
+                    "Categorias"
                 ],
-                "summary": "Exibe um curso",
-                "description": "Display the specified resource.",
-                "operationId": "703f82b2a4cf2b6bec94909bbbc1ea7a",
+                "summary": "Consulta uma categoria pelo ID",
+                "operationId": "486849467f411ec5e4bdf111f50ede87",
                 "parameters": [
                     {
                         "name": "id",
@@ -481,19 +105,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Curso encontrado",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/components/schemas/Course"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
+                        "description": "Categoria encontrada"
                     },
                     "401": {
                         "$ref": "#/components/responses/Unauthenticated"
@@ -510,11 +122,10 @@
             },
             "put": {
                 "tags": [
-                    "Cursos"
+                    "Categorias"
                 ],
-                "summary": "Atualiza um curso",
-                "description": "Update the specified resource in storage.",
-                "operationId": "3a7361097bd69b58c4a6d2bf4bdd283f",
+                "summary": "Atualiza uma categoria",
+                "operationId": "b648463d94e0caf7b8d842a1008789b2",
                 "parameters": [
                     {
                         "name": "id",
@@ -536,7 +147,12 @@
                                 "properties": {
                                     "name": {
                                         "type": "string",
-                                        "example": "Engenharia de Software"
+                                        "example": "Faculdade"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Trabalhos e provas",
+                                        "nullable": true
                                     }
                                 },
                                 "type": "object"
@@ -546,19 +162,7 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Curso atualizado",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/components/schemas/Course"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
+                        "description": "Categoria atualizada com sucesso"
                     },
                     "401": {
                         "$ref": "#/components/responses/Unauthenticated"
@@ -578,11 +182,10 @@
             },
             "delete": {
                 "tags": [
-                    "Cursos"
+                    "Categorias"
                 ],
-                "summary": "Remove um curso",
-                "description": "Remove the specified resource from storage.",
-                "operationId": "46eece04198b0ea6faa7697bffa4f469",
+                "summary": "Exclui uma categoria",
+                "operationId": "491dfe5b6b58b480181690ede6550e44",
                 "parameters": [
                     {
                         "name": "id",
@@ -595,7 +198,7 @@
                 ],
                 "responses": {
                     "204": {
-                        "description": "Curso removido"
+                        "description": "Categoria excluída com sucesso"
                     },
                     "401": {
                         "$ref": "#/components/responses/Unauthenticated"
@@ -678,6 +281,463 @@
                         "$ref": "#/components/responses/ValidationError"
                     }
                 }
+            }
+        },
+        "/tags": {
+            "get": {
+                "tags": [
+                    "Etiquetas"
+                ],
+                "summary": "Lista as etiquetas do usuário autenticado",
+                "operationId": "566a70c4a8ca7c7dd9a6d666f64728a6",
+                "parameters": [
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "Filtra etiquetas pelo nome",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de etiquetas retornada com sucesso"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Etiquetas"
+                ],
+                "summary": "Cadastra uma nova etiqueta",
+                "operationId": "c2812b6e11418dc90bfd41147c2c78c9",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Urgente"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Etiqueta cadastrada com sucesso"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthenticated"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationError"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/tags/{id}": {
+            "get": {
+                "tags": [
+                    "Etiquetas"
+                ],
+                "summary": "Consulta uma etiqueta pelo ID",
+                "operationId": "ae297f491633fb2505eef3f3018bffd5",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Etiqueta encontrada"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthenticated"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Etiquetas"
+                ],
+                "summary": "Atualiza uma etiqueta",
+                "operationId": "41d027b67a1dbcae41406e06a4333598",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Muito urgente"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Etiqueta atualizada com sucesso"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthenticated"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationError"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Etiquetas"
+                ],
+                "summary": "Exclui uma etiqueta",
+                "operationId": "20ff72ee52cc57bcbdf81b4fdf09ed8f",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Etiqueta excluída com sucesso"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthenticated"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/tasks": {
+            "get": {
+                "tags": [
+                    "Tarefas"
+                ],
+                "summary": "Lista as tarefas do usuário autenticado",
+                "operationId": "7786da811325606208249ebc8d393d9a",
+                "responses": {
+                    "200": {
+                        "description": "Lista de tarefas retornada com sucesso"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Tarefas"
+                ],
+                "summary": "Cadastra uma nova tarefa",
+                "operationId": "a737e990cef5769592bc41ee6a62f7f1",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "title"
+                                ],
+                                "properties": {
+                                    "title": {
+                                        "type": "string",
+                                        "example": "Estudar Flutter",
+                                        "maxLength": 255,
+                                        "minLength": 2
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Finalizar o trabalho da faculdade",
+                                        "nullable": true
+                                    },
+                                    "due_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2026-11-15",
+                                        "nullable": true
+                                    },
+                                    "is_completed": {
+                                        "type": "boolean",
+                                        "example": false
+                                    },
+                                    "category_id": {
+                                        "type": "integer",
+                                        "example": 2,
+                                        "nullable": true
+                                    },
+                                    "tags": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer"
+                                        },
+                                        "example": [
+                                            2
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Tarefa cadastrada com sucesso"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthenticated"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationError"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/tasks/{id}": {
+            "get": {
+                "tags": [
+                    "Tarefas"
+                ],
+                "summary": "Consulta uma tarefa pelo ID",
+                "operationId": "dd21301b6ef0425f2260a34eac9679c5",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID da tarefa",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Tarefa encontrada"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Acesso negado"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Tarefas"
+                ],
+                "summary": "Atualiza uma tarefa",
+                "operationId": "2a0a8c212f84263f9a249469557b2539",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "title"
+                                ],
+                                "properties": {
+                                    "title": {
+                                        "type": "string",
+                                        "example": "Estudar Flutter - Atualizado",
+                                        "maxLength": 255,
+                                        "minLength": 2
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Revisar o projeto",
+                                        "nullable": true
+                                    },
+                                    "due_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2026-11-15",
+                                        "nullable": true
+                                    },
+                                    "is_completed": {
+                                        "type": "boolean",
+                                        "example": true
+                                    },
+                                    "category_id": {
+                                        "type": "integer",
+                                        "example": 2,
+                                        "nullable": true
+                                    },
+                                    "tags": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer"
+                                        },
+                                        "example": [
+                                            2
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Tarefa atualizada com sucesso"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Acesso negado"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationError"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Tarefas"
+                ],
+                "summary": "Exclui uma tarefa",
+                "operationId": "a2d3ec140e69f8b97ce812eadbe932ac",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Tarefa excluída com sucesso"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Acesso negado"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
             }
         },
         "/users": {
@@ -1011,57 +1071,6 @@
                 },
                 "type": "object"
             },
-            "Classroom": {
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "name": {
-                        "type": "string",
-                        "example": "Turma A"
-                    },
-                    "vacancies": {
-                        "type": "integer",
-                        "example": 30
-                    },
-                    "course_id": {
-                        "type": "integer",
-                        "example": 1,
-                        "nullable": true
-                    },
-                    "created_at": {
-                        "type": "string",
-                        "format": "date-time"
-                    },
-                    "updated_at": {
-                        "type": "string",
-                        "format": "date-time"
-                    }
-                },
-                "type": "object"
-            },
-            "Course": {
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "name": {
-                        "type": "string",
-                        "example": "Engenharia de Software"
-                    },
-                    "created_at": {
-                        "type": "string",
-                        "format": "date-time"
-                    },
-                    "updated_at": {
-                        "type": "string",
-                        "format": "date-time"
-                    }
-                },
-                "type": "object"
-            },
             "User": {
                 "properties": {
                     "id": {
@@ -1127,16 +1136,20 @@
     },
     "tags": [
         {
-            "name": "Turmas",
-            "description": "Turmas"
-        },
-        {
-            "name": "Cursos",
-            "description": "Cursos"
+            "name": "Categorias",
+            "description": "Categorias"
         },
         {
             "name": "Autenticação",
             "description": "Autenticação"
+        },
+        {
+            "name": "Etiquetas",
+            "description": "Etiquetas"
+        },
+        {
+            "name": "Tarefas",
+            "description": "Tarefas"
         },
         {
             "name": "Usuários",

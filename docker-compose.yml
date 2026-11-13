@@ -1,37 +1,33 @@
+
 services:
-  # API Laravel
   app:
     build: .
     ports:
-      - "8020:8000"
+      - "8030:8000"
     volumes:
-      - ./:/var/www/html    # código do host espelhado no container
-    user: "1000:1000"       # mesmo usuário do host, evita arquivos criados como root
+      - ./:/var/www/html
+    user: "1000:1000"
     depends_on:
       - mysql
-  
+
   mysql:
     image: mysql:8.4
     ports:
-      - "3308:3306"
+      - "3309:3306"
     environment:
-      MYSQL_DATABASE: paradigmas-prog
+      MYSQL_DATABASE: tarefas
       MYSQL_USER: paradigmas
       MYSQL_PASSWORD: secret
       MYSQL_ROOT_PASSWORD: root
     volumes:
-      - mysql-data:/var/lib/mysql 
-  
-  # Interface web para visualizar o banco
+      - mysql-data:/var/lib/mysql
+
   adminer:
     image: adminer
     ports:
-      - "8040:8080"
+      - "8050:8080"
     depends_on:
       - mysql
 
-
 volumes:
   mysql-data:
-  # dados persistem mesmo se o container for removido
-
