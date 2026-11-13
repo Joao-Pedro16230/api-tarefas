@@ -745,47 +745,11 @@
                 "tags": [
                     "Usuários"
                 ],
-                "summary": "Lista os usuários",
-                "description": "Display a listing of the resource.",
+                "summary": "Lista o usuário autenticado",
                 "operationId": "7208c29037df2b8bb02499ba39ed8a78",
-                "parameters": [
-                    {
-                        "name": "name",
-                        "in": "query",
-                        "description": "Filtra pelo nome (busca parcial)",
-                        "required": false,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "email",
-                        "in": "query",
-                        "description": "Filtra pelo email (busca parcial)",
-                        "required": false,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
                 "responses": {
                     "200": {
-                        "description": "Lista de usuários",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/components/schemas/User"
-                                            }
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
+                        "description": "Usuário retornado com sucesso"
                     },
                     "401": {
                         "$ref": "#/components/responses/Unauthenticated"
@@ -801,8 +765,7 @@
                 "tags": [
                     "Usuários"
                 ],
-                "summary": "Cadastra um usuário",
-                "description": "Store a newly created resource in storage.",
+                "summary": "Cadastra um novo usuário",
                 "operationId": "262eb5ca1fdea354023c0a8870442c1e",
                 "requestBody": {
                     "required": true,
@@ -817,9 +780,7 @@
                                 "properties": {
                                     "name": {
                                         "type": "string",
-                                        "example": "Maria Silva",
-                                        "maxLength": 100,
-                                        "minLength": 3
+                                        "example": "Maria Silva"
                                     },
                                     "email": {
                                         "type": "string",
@@ -828,9 +789,7 @@
                                     },
                                     "password": {
                                         "type": "string",
-                                        "example": "1234",
-                                        "maxLength": 20,
-                                        "minLength": 4
+                                        "example": "senha123"
                                     }
                                 },
                                 "type": "object"
@@ -840,19 +799,7 @@
                 },
                 "responses": {
                     "201": {
-                        "description": "Usuário criado",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/components/schemas/User"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
+                        "description": "Usuário cadastrado com sucesso"
                     },
                     "401": {
                         "$ref": "#/components/responses/Unauthenticated"
@@ -873,8 +820,7 @@
                 "tags": [
                     "Usuários"
                 ],
-                "summary": "Exibe um usuário",
-                "description": "Display the specified resource.",
+                "summary": "Consulta o próprio usuário",
                 "operationId": "6946bbab7898f59a09e3c8e529a38907",
                 "parameters": [
                     {
@@ -888,19 +834,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Usuário encontrado",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/components/schemas/User"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
+                        "description": "Usuário encontrado"
                     },
                     "401": {
                         "$ref": "#/components/responses/Unauthenticated"
@@ -919,8 +853,7 @@
                 "tags": [
                     "Usuários"
                 ],
-                "summary": "Atualiza um usuário (todos os campos são opcionais)",
-                "description": "Update the specified resource in storage.",
+                "summary": "Atualiza o próprio usuário",
                 "operationId": "05028d02ea3e9a99abd6260cfe05b179",
                 "parameters": [
                     {
@@ -940,9 +873,7 @@
                                 "properties": {
                                     "name": {
                                         "type": "string",
-                                        "example": "Maria Silva",
-                                        "maxLength": 100,
-                                        "minLength": 3
+                                        "example": "Maria Silva"
                                     },
                                     "email": {
                                         "type": "string",
@@ -951,9 +882,7 @@
                                     },
                                     "password": {
                                         "type": "string",
-                                        "example": "1234",
-                                        "maxLength": 20,
-                                        "minLength": 4
+                                        "example": "novasenha123"
                                     }
                                 },
                                 "type": "object"
@@ -963,19 +892,7 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Usuário atualizado",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/components/schemas/User"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
+                        "description": "Usuário atualizado com sucesso"
                     },
                     "401": {
                         "$ref": "#/components/responses/Unauthenticated"
@@ -997,8 +914,7 @@
                 "tags": [
                     "Usuários"
                 ],
-                "summary": "Remove um usuário",
-                "description": "Remove the specified resource from storage.",
+                "summary": "Exclui o próprio usuário",
                 "operationId": "b3d28da5dc9de7fc1bd425f93b54ff7b",
                 "parameters": [
                     {
@@ -1011,16 +927,8 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "Usuário deletado com sucesso!",
-                        "content": {
-                            "text/plain": {
-                                "schema": {
-                                    "type": "string",
-                                    "example": "Usuário deletado com sucesso!"
-                                }
-                            }
-                        }
+                    "204": {
+                        "description": "Usuário excluído com sucesso"
                     },
                     "401": {
                         "$ref": "#/components/responses/Unauthenticated"

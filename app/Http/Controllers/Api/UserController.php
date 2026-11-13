@@ -7,45 +7,43 @@ use App\Http\Requests\CreateUserRequest;
 use App\Http\Resources\UserResource;
 use App\Http\Services\UserService;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use OpenApi\Attributes as OA;
 
 class UserController extends Controller
 {
-    public function __construct(public UserService $userService)
-    {}
+    public function __construct(private UserService $userService)
+    {
+    }
 
-    /**
-     * Display a listing of the resource.
-     */
     #[OA\Get(
         path: '/users',
-        summary: 'Lista os usuários',
+        summary: 'Lista o usuário autenticado',
         security: [['sanctum' => []]],
         tags: ['Usuários'],
-        parameters: [
-            new OA\Parameter(name: 'name', in: 'query', required: false, description: 'Filtra pelo nome (busca parcial)', schema: new OA\Schema(type: 'string')),
-            new OA\Parameter(name: 'email', in: 'query', required: false, description: 'Filtra pelo email (busca parcial)', schema: new OA\Schema(type: 'string')),
-        ],
         responses: [
             new OA\Response(
                 response: 200,
-                description: 'Lista de usuários',
-                content: new OA\JsonContent(properties: [new OA\Property(property: 'data', type: 'array', items: new OA\Items(ref: '#/components/schemas/User'))])
+                description: 'Usuário retornado com sucesso'
             ),
-            new OA\Response(response: 401, ref: '#/components/responses/Unauthenticated'),
+            new OA\Response(
+                response: 401,
+                ref: '#/components/responses/Unauthenticated'
+            ),
         ]
     )]
     public function index(Request $request)
     {
-        return UserResource::collection($this->userService->getWithFilters($request->all()));
+        return UserResource::collection(
+            $request->user()->newQuery()
+                ->whereKey($request->user()->getKey())
+                ->get()
+        );
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     #[OA\Post(
         path: '/users',
-        summary: 'Cadastra um usuário',
+        summary: 'Cadastra um novo usuário',
         security: [['sanctum' => []]],
         tags: ['Usuários'],
         requestBody: new OA\RequestBody(
@@ -53,99 +51,223 @@ class UserController extends Controller
             content: new OA\JsonContent(
                 required: ['name', 'email', 'password'],
                 properties: [
-                    new OA\Property(property: 'name', type: 'string', minLength: 3, maxLength: 100, example: 'Maria Silva'),
-                    new OA\Property(property: 'email', type: 'string', format: 'email', example: 'maria@email.com'),
-                    new OA\Property(property: 'password', type: 'string', minLength: 4, maxLength: 20, example: '1234'),
+                    new OA\Property(
+                        property: 'name',
+                        type: 'string',
+                        example: 'Maria Silva'
+                    ),
+                    new OA\Property(
+                        property: 'email',
+                        type: 'string',
+                        format: 'email',
+                        example: 'maria@email.com'
+                    ),
+                    new OA\Property(
+                        property: 'password',
+                        type: 'string',
+                        example: 'senha123'
+                    ),
                 ]
             )
         ),
         responses: [
-            new OA\Response(response: 201, description: 'Usuário criado', content: new OA\JsonContent(properties: [new OA\Property(property: 'data', ref: '#/components/schemas/User')])),
-            new OA\Response(response: 401, ref: '#/components/responses/Unauthenticated'),
-            new OA\Response(response: 422, ref: '#/components/responses/ValidationError'),
+            new OA\Response(
+                response: 201,
+                description: 'Usuário cadastrado com sucesso'
+            ),
+            new OA\Response(
+                response: 401,
+                ref: '#/components/responses/Unauthenticated'
+            ),
+            new OA\Response(
+                response: 422,
+                ref: '#/components/responses/ValidationError'
+            ),
         ]
     )]
     public function store(CreateUserRequest $request)
     {
-        return new UserResource($this->userService->store($request->validated()));
+        $user = $this->userService->store(
+            $request->validated()
+        );
+
+        return (new UserResource($user))
+            ->response()
+            ->setStatusCode(201);
     }
 
-    /**
-     * Display the specified resource.
-     */
     #[OA\Get(
         path: '/users/{id}',
-        summary: 'Exibe um usuário',
+        summary: 'Consulta o próprio usuário',
         security: [['sanctum' => []]],
         tags: ['Usuários'],
-        parameters: [new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))],
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                required: true,
+                schema: new OA\Schema(type: 'integer')
+            ),
+        ],
         responses: [
-            new OA\Response(response: 200, description: 'Usuário encontrado', content: new OA\JsonContent(properties: [new OA\Property(property: 'data', ref: '#/components/schemas/User')])),
-            new OA\Response(response: 401, ref: '#/components/responses/Unauthenticated'),
-            new OA\Response(response: 404, ref: '#/components/responses/NotFound'),
+            new OA\Response(
+                response: 200,
+                description: 'Usuário encontrado'
+            ),
+            new OA\Response(
+                response: 401,
+                ref: '#/components/responses/Unauthenticated'
+            ),
+            new OA\Response(
+                response: 404,
+                ref: '#/components/responses/NotFound'
+            ),
         ]
     )]
-    public function show(string $id)
+    public function show(Request $request, string $id)
     {
-        return new UserResource($this->userService->show($id));
+        abort_unless(
+            (string) $request->user()->getKey() === $id,
+            404
+        );
+
+        return new UserResource(
+            $this->userService->show($id)
+        );
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     #[OA\Put(
         path: '/users/{id}',
-        summary: 'Atualiza um usuário (todos os campos são opcionais)',
+        summary: 'Atualiza o próprio usuário',
         security: [['sanctum' => []]],
         tags: ['Usuários'],
-        parameters: [new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))],
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                required: true,
+                schema: new OA\Schema(type: 'integer')
+            ),
+        ],
         requestBody: new OA\RequestBody(
             required: true,
             content: new OA\JsonContent(
                 properties: [
-                    new OA\Property(property: 'name', type: 'string', minLength: 3, maxLength: 100, example: 'Maria Silva'),
-                    new OA\Property(property: 'email', type: 'string', format: 'email', example: 'maria@email.com'),
-                    new OA\Property(property: 'password', type: 'string', minLength: 4, maxLength: 20, example: '1234'),
+                    new OA\Property(
+                        property: 'name',
+                        type: 'string',
+                        example: 'Maria Silva'
+                    ),
+                    new OA\Property(
+                        property: 'email',
+                        type: 'string',
+                        format: 'email',
+                        example: 'maria@email.com'
+                    ),
+                    new OA\Property(
+                        property: 'password',
+                        type: 'string',
+                        example: 'novasenha123'
+                    ),
                 ]
             )
         ),
         responses: [
-            new OA\Response(response: 200, description: 'Usuário atualizado', content: new OA\JsonContent(properties: [new OA\Property(property: 'data', ref: '#/components/schemas/User')])),
-            new OA\Response(response: 401, ref: '#/components/responses/Unauthenticated'),
-            new OA\Response(response: 404, ref: '#/components/responses/NotFound'),
-            new OA\Response(response: 422, ref: '#/components/responses/ValidationError'),
+            new OA\Response(
+                response: 200,
+                description: 'Usuário atualizado com sucesso'
+            ),
+            new OA\Response(
+                response: 401,
+                ref: '#/components/responses/Unauthenticated'
+            ),
+            new OA\Response(
+                response: 404,
+                ref: '#/components/responses/NotFound'
+            ),
+            new OA\Response(
+                response: 422,
+                ref: '#/components/responses/ValidationError'
+            ),
         ]
     )]
     public function update(Request $request, string $id)
     {
+        abort_unless(
+            (string) $request->user()->getKey() === $id,
+            404
+        );
+
         $data = $request->validate([
-            'name' => ['sometimes', 'string', 'max:100', 'min:3'],
-            'email' => ['sometimes', 'email'],
-            'password' => ['sometimes', 'min:4', 'max:20']
+            'name' => [
+                'sometimes',
+                'required',
+                'string',
+                'min:3',
+                'max:100',
+            ],
+            'email' => [
+                'sometimes',
+                'required',
+                'email',
+                Rule::unique('users', 'email')->ignore(
+                    $request->user()->getKey()
+                ),
+            ],
+            'password' => [
+                'sometimes',
+                'required',
+                'string',
+                'min:8',
+                'max:72',
+            ],
         ]);
 
-        return new UserResource($this->userService->update($data, $id));
+        $user = $this->userService->update(
+            $data,
+            $id
+        );
+
+        return new UserResource($user);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     #[OA\Delete(
         path: '/users/{id}',
-        summary: 'Remove um usuário',
+        summary: 'Exclui o próprio usuário',
         security: [['sanctum' => []]],
         tags: ['Usuários'],
-        parameters: [new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))],
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                required: true,
+                schema: new OA\Schema(type: 'integer')
+            ),
+        ],
         responses: [
-            new OA\Response(response: 200, description: 'Usuário deletado com sucesso!', content: new OA\MediaType(mediaType: 'text/plain', schema: new OA\Schema(type: 'string', example: 'Usuário deletado com sucesso!'))),
-            new OA\Response(response: 401, ref: '#/components/responses/Unauthenticated'),
-            new OA\Response(response: 404, ref: '#/components/responses/NotFound'),
+            new OA\Response(
+                response: 204,
+                description: 'Usuário excluído com sucesso'
+            ),
+            new OA\Response(
+                response: 401,
+                ref: '#/components/responses/Unauthenticated'
+            ),
+            new OA\Response(
+                response: 404,
+                ref: '#/components/responses/NotFound'
+            ),
         ]
     )]
-    public function destroy(string $id)
+    public function destroy(Request $request, string $id)
     {
+        abort_unless(
+            (string) $request->user()->getKey() === $id,
+            404
+        );
+
         $this->userService->destroy($id);
 
-        return response('Usuário deletado com sucesso!');
+        return response()->noContent();
     }
 }
